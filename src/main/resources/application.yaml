@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: ecomm-inventory-movement
+
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+    username: NKW
+    password: Default26
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+
+inventory:
+  adjustment:
+    oauth-url: https://a2000cloud.com:8889/ords22/lptest/api/oauth/token
+    upload-url: https://a2000cloud.com:8889/ords22/lptest/api/uploads/upload/INV_ADJ
+    viewer-url: https://a2000cloud.com:8889/ords22/lptest/api/viewers/view/VR_INVENT_WH_Z
+    oauth-username: OO-IT3i1zDWUgnj5jewe9Q..
+    oauth-password: Cjj_FmeYEk7x7_OfkC48xw..
+#    oauth-username: ${INVENTORY_ADJUSTMENT_OAUTH_USERNAME:}
+#    oauth-password: ${INVENTORY_ADJUSTMENT_OAUTH_PASSWORD:}
+
+#  jpa:
+#    hibernate:
+#      ddl-auto: none
+#
+#  datasource:
+#    url: jdbc:oracle:thin:@LPOOL
+#    username: ${ORACLE_DB_USERNAME}
+#    password: ${ORACLE_DB_PASSWORD}
+#    hikari:
+#      data-source-properties:
+#        "[oracle.net.tns_admin]": ${ORACLE_TNS_ADMIN}
+#        "[oracle.net.ssl_version]": ${ORACLE_SSL_VERSION:1.2}

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout('Job Inventory Adjustment | 2253 Apparel', ~{::main}, ~{::pageScripts})}">
+<main>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1 class="page-title">Job Inventory Adjustment</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card inventory-card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <ul class="nav nav-tabs card-header-tabs" id="adjustment-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="manual-tab" data-toggle="tab" href="#manual"
+                                   role="tab" aria-controls="manual" aria-selected="true">Manual</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="scheduled-tab" data-toggle="tab" href="#scheduled"
+                                   role="tab" aria-controls="scheduled" aria-selected="false">Scheduled</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="beta-tab" data-toggle="tab" href="#beta"
+                                   role="tab" aria-controls="beta" aria-selected="false">Beta Testing</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="time-dependent-tab" data-toggle="tab" href="#time-dependent"
+                                   role="tab" aria-controls="beta" aria-selected="false">Time Dependent Testing</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="adjustment-tab-content">
+                            <div class="tab-pane fade show active" id="manual" role="tabpanel"
+                                 aria-labelledby="manual-tab">
+                                <form id="manual-adjustment-form" th:attr="data-adjustment-url=@{/inventory/adjustment/manual}">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="manual-warehouse">Warehouse</label>
+                                                <input id="manual-warehouse" name="warehouse" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="manual-style">Style</label>
+                                                <input id="manual-style" name="style" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="manual-color">Color</label>
+                                                <input id="manual-color" name="color" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="manual-size">Size</label>
+                                                <input id="manual-size" name="size" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="manual-quantity">Quantity</label>
+                                                <input id="manual-quantity" name="quantity" type="number" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="adjust-button" type="button" class="btn btn-brand">Adjust</button>
+                                    <button id="clear-button" type="button" class="btn btn-secondary">Clear</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="scheduled" role="tabpanel"
+                                 aria-labelledby="scheduled-tab">
+                                <form id="scheduled-adjustment-form"
+                                      th:attr="data-adjustment-url=@{/inventory/adjustment/scheduled}">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="ca-min-threshold">CA min threshold</label>
+                                                <input id="ca-min-threshold" name="caMinThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="ca-max-threshold">CA max threshold</label>
+                                                <input id="ca-max-threshold" name="caMaxThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="dc-min-threshold">DC min threshold</label>
+                                                <input id="dc-min-threshold" name="dcMinThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="dc-max-threshold">DC max threshold</label>
+                                                <input id="dc-max-threshold" name="dcMaxThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="style-created-date-from">Style created Date from</label>
+                                                <input id="style-created-date-from" name="styleCreatedDateFrom" type="date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="style-created-date-to">Style created Date to</label>
+                                                <input id="style-created-date-to" name="styleCreatedDateTo" type="date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="quantity-to-transfer">Quantity to transfer</label>
+                                                <input id="quantity-to-transfer" name="quantityToTransfer" type="number" class="form-control" min="1" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="trigger-job-button" type="button" class="btn btn-brand">Trigger Job</button>
+                                    <button id="run-job-button" type="button" class="btn btn-brand">Run Automated Job</button>
+                                    <button id="cancel-job-button" type="reset" class="btn btn-secondary">Cancel</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="beta" role="tabpanel"
+                                 aria-labelledby="beta-tab">
+                                <form id="beta-adjustment-form"
+                                      th:attr="data-adjustment-url=@{/inventory/adjustment/beta}">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="beta-style">Style</label>
+                                                <input id="beta-style" name="style" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="beta-color">Color</label>
+                                                <input id="beta-color" name="color" type="text" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="beta-size">Size</label>
+                                                <input id="beta-size" name="size" type="number" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="beta-adjust-button" type="button" class="btn btn-brand">Adjust</button>
+                                    <button id="beta-clear-button" type="button" class="btn btn-secondary">Clear</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="time-dependent" role="tabpanel"
+                                 aria-labelledby="time-dependent-tab">
+                                <form id="time-dependent-adjustment-form"
+                                      th:attr="data-adjustment-url=@{/inventory/adjustment/time-dependent}">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="ca-min-threshold">CA min threshold</label>
+                                                <input id="ca-min-threshold-time-dependent" name="caMinThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="ca-max-threshold">CA max threshold</label>
+                                                <input id="ca-max-threshold-time-dependent" name="caMaxThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="dc-min-threshold">DC min threshold</label>
+                                                <input id="dc-min-threshold-time-dependent" name="dcMinThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="dc-max-threshold">DC max threshold</label>
+                                                <input id="dc-max-threshold-time-dependent" name="dcMaxThreshold" type="number" class="form-control" min="0" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="style-created-date-from">Style created Date from</label>
+                                                <input id="style-created-date-from-time-dependent" name="styleCreatedDateFrom" type="date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="style-created-date-to">Style created Date to</label>
+                                                <input id="style-created-date-to-time-dependent" name="styleCreatedDateTo" type="date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="quantity-to-transfer">Quantity to transfer</label>
+                                                <input id="quantity-to-transfer-time-dependent" name="quantityToTransfer" type="number" class="form-control" min="1" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="run-job-button-time-dependent" type="button" class="btn btn-brand">Run Automated Job</button>
+                                    <button id="cancel-job-button-time-dependent" type="reset" class="btn btn-secondary">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</main>
+<th:block th:fragment="pageScripts">
+<script>
+    const adjustmentForm = document.getElementById('manual-adjustment-form');
+    const adjustButton = document.getElementById('adjust-button');
+
+    document.getElementById('clear-button').addEventListener('click', () => adjustmentForm.reset());
+
+    adjustButton.addEventListener('click', async () => {
+        if (!adjustmentForm.reportValidity()) {
+            return;
+        }
+
+        adjustButton.disabled = true;
+        try {
+            const formData = new FormData(adjustmentForm);
+            const response = await fetch(adjustmentForm.dataset.adjustmentUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    warehouse: formData.get('warehouse'),
+                    style: formData.get('style'),
+                    color: formData.get('color'),
+                    size: formData.get('size'),
+                    quantity: Number(formData.get('quantity'))
+                })
+            });
+            const result = await response.json();
+            window.alert(response.ok && result.status === 'Success'
+                ? 'Successful adjustment'
+                : 'Failed adjustment');
+        } catch (error) {
+            window.alert('Failed adjustment');
+        } finally {
+            adjustButton.disabled = false;
+        }
+    });
+
+    const betaAdjustmentForm = document.getElementById('beta-adjustment-form');
+    const betaAdjustButton = document.getElementById('beta-adjust-button');
+
+    document.getElementById('beta-clear-button').addEventListener('click', () => betaAdjustmentForm.reset());
+
+    betaAdjustButton.addEventListener('click', async () => {
+        if (!betaAdjustmentForm.reportValidity()) {
+            return;
+        }
+
+        betaAdjustButton.disabled = true;
+        try {
+            const formData = new FormData(betaAdjustmentForm);
+            const response = await fetch(betaAdjustmentForm.dataset.adjustmentUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    style: formData.get('style'),
+                    color: formData.get('color'),
+                    size: Number(formData.get('size'))
+                })
+            });
+            const result = await response.json();
+            window.alert(result.message || 'Failed inventory movement');
+        } catch (error) {
+            window.alert('Failed inventory movement');
+        } finally {
+            betaAdjustButton.disabled = false;
+        }
+    });
+
+    const scheduledAdjustmentForm = document.getElementById('scheduled-adjustment-form');
+    const triggerJobButton = document.getElementById('trigger-job-button');
+
+    triggerJobButton.addEventListener('click', async () => {
+        if (!scheduledAdjustmentForm.reportValidity()) {
+            return;
+        }
+
+        const formData = new FormData(scheduledAdjustmentForm);
+        const caMinThreshold = Number(formData.get('caMinThreshold'));
+        const caMaxThreshold = Number(formData.get('caMaxThreshold'));
+        const dcMinThreshold = Number(formData.get('dcMinThreshold'));
+        const dcMaxThreshold = Number(formData.get('dcMaxThreshold'));
+        if (caMinThreshold > caMaxThreshold || dcMinThreshold > dcMaxThreshold) {
+            window.alert('Minimum thresholds must not exceed maximum thresholds.');
+            return;
+        }
+
+        triggerJobButton.disabled = true;
+        try {
+            const response = await fetch(scheduledAdjustmentForm.dataset.adjustmentUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    caMinThreshold,
+                    caMaxThreshold,
+                    dcMinThreshold,
+                    dcMaxThreshold,
+                    quantityToTransfer: Number(formData.get('quantityToTransfer'))
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`Scheduled inventory adjustment failed with status ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.failures > 0) {
+                window.alert('Failed inventory movement, please check logs.');
+            } else if (result.movements > 0) {
+                window.alert('Successful inventory movement');
+            } else {
+                window.alert('No qualifying inventory found.');
+            }
+        } catch (error) {
+            console.error('Scheduled inventory adjustment failed', error);
+            window.alert('Failed inventory movement, please check logs.');
+        } finally {
+            triggerJobButton.disabled = false;
+        }
+    });
+</script>
+</th:block>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout('PLM Styles Integration | 2253 Apparel', ~{::main}, ~{::pageScripts})}">
+<main>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h1 class="page-title">PLM Styles Integration</h1>
+                        <p class="page-subtitle">Track styles, warehouse stock, and availability in one place.</p>
+                    </div>
+                    <span class="text-muted small"><i class="far fa-clock mr-1"></i> Live styles</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card summary-card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div><div class="summary-label">Inventory records</div><div class="summary-value" id="record-count" th:text="${#lists.size(inventory)}">0</div></div>
+                                <div class="summary-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card summary-card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div><div class="summary-label">Styles</div><div class="summary-value" id="style-count">0</div></div>
+                                <div class="summary-icon"><i class="fa-solid fa-shirt"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card summary-card">
+                            <div class="card-body d-flex align-items-center justify-content-between">
+                                <div><div class="summary-label">Selected items</div><div class="summary-value" id="selected-count">0</div></div>
+                                <div class="summary-icon"><i class="fa-solid fa-check-double"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card inventory-card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <div>
+                            <h3 class="card-title">Style inventory</h3>
+                            <span class="text-muted small">Search, sort, and select inventory records</span>
+                        </div>
+                        <div class="toolbar d-flex align-items-center">
+                            <label for="inventory-search" class="sr-only">Search inventory</label>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input id="inventory-search" type="search" class="form-control" placeholder="Search styles, warehouse, color...">
+                            </div>
+                            <button id="add-selected" type="button" class="btn btn-brand" disabled>
+                                <i class="fa-solid fa-plus mr-1"></i> Add selected <span id="button-count"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table" id="inventory-table">
+                            <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <div class="custom-control custom-checkbox">
+                                        <input id="select-all" class="custom-control-input" type="checkbox" aria-label="Select all visible inventory">
+                                        <label class="custom-control-label" for="select-all"></label>
+                                    </div>
+                                </th>
+                                <th><button class="sort-button" data-sort="whouse" type="button">Warehouse <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="style" type="button">Style <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="colorNo" type="button">Color no. <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="onHand" type="button">On hand <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="openOrders" type="button">Open orders <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="picktkt" type="button">Pick tickets <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="atsStock" type="button">ATS stock <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="wip" type="button">WIP <i class="fa-solid fa-sort"></i></button></th>
+                                <th><button class="sort-button" data-sort="ats" type="button">ATS <i class="fa-solid fa-sort"></i></button></th>
+                            </tr>
+                            </thead>
+                            <tbody id="inventory-body">
+                            <tr th:each="item : ${inventory}"
+                                th:attr="data-whouse=${item.whouse},data-style=${item.style},data-color-no=${item.colorNo},data-on-hand=${item.onHand},data-open-orders=${item.openOrders},data-picktkt=${item.picktkt},data-ats-stock=${item.atsStock},data-wip=${item.wip},data-ats=${item.ats}">
+                                <td class="checkbox-cell">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input row-select" type="checkbox"
+                                               th:id="${'inventory-' + item.whouse + '-' + item.style + '-' + item.colorNo}"
+                                               th:aria-label="${'Select style ' + item.style}">
+                                        <label class="custom-control-label"
+                                               th:for="${'inventory-' + item.whouse + '-' + item.style + '-' + item.colorNo}"></label>
+                                    </div>
+                                </td>
+                                <td th:text="${item.whouse}">WH1</td>
+                                <td><span class="style-value" th:text="${item.style}">STYLE</span></td>
+                                <td><span class="color-tag" th:text="${item.colorNo}">COLOR</span></td>
+                                <td th:text="${item.onHand}">0</td>
+                                <td th:text="${item.openOrders}">0</td>
+                                <td th:text="${item.picktkt}">0</td>
+                                <td th:text="${item.atsStock}">0</td>
+                                <td th:text="${item.wip}">0</td>
+                                <td class="font-weight-bold" th:text="${item.ats}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div id="empty-state" class="empty-state d-none">
+                            <i class="fa-solid fa-magnifying-glass mb-2"></i>
+                            <div class="font-weight-bold">No inventory found</div>
+                            <div class="small">Try another search term.</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex align-items-center">
+                            <span class="page-info" id="page-info">Showing 0 records</span>
+                            <label for="page-size" class="sr-only">Rows per page</label>
+                            <select id="page-size" class="page-size">
+                                <option value="10">10 / page</option>
+                                <option value="25">25 / page</option>
+                                <option value="50">50 / page</option>
+                                <option value="100">100 / page</option>
+                            </select>
+                        </div>
+                        <nav aria-label="Inventory pages"><ul id="pagination" class="pagination pagination-sm"></ul></nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="toast-container" aria-live="polite" aria-atomic="true">
+    <div id="selection-toast" class="toast" role="status" data-delay="3500">
+        <div class="toast-header">
+            <i class="fa-solid fa-circle-check text-success mr-2"></i>
+            <strong class="mr-auto">Selection updated</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="toast-body" id="toast-message"></div>
+    </div>
+    </div>
+</main>
+<th:block th:fragment="pageScripts">
+<script>
+    (() => {
+        const body = document.getElementById('inventory-body');
+        const search = document.getElementById('inventory-search');
+        const pageSizeSelect = document.getElementById('page-size');
+        const pagination = document.getElementById('pagination');
+        const selectAll = document.getElementById('select-all');
+        const selectedCount = document.getElementById('selected-count');
+        const addButton = document.getElementById('add-selected');
+        const rows = Array.from(body.querySelectorAll('tr'));
+        const selected = new Set();
+        const fieldAttributes = {
+            whouse: 'whouse', style: 'style', colorNo: 'colorNo',
+            onHand: 'onHand', openOrders: 'openOrders', picktkt: 'picktkt',
+            atsStock: 'atsStock', wip: 'wip', ats: 'ats'
+        };
+        let filteredRows = [...rows];
+        let page = 1;
+        let pageSize = Number(pageSizeSelect.value);
+        let sortField = '';
+        let sortDirection = 1;
+
+        function keyOf(row) {
+            return [row.dataset.whouse, row.dataset.style, row.dataset.colorNo].join('\u001f');
+        }
+
+        function updateSelection() {
+            selectedCount.textContent = selected.size.toLocaleString();
+            document.getElementById('button-count').textContent = selected.size ? `(${selected.size})` : '';
+            addButton.disabled = selected.size === 0;
+            const visible = filteredRows.slice((page - 1) * pageSize, page * pageSize);
+            const checkedCount = visible.filter(row => selected.has(keyOf(row))).length;
+            selectAll.checked = visible.length > 0 && checkedCount === visible.length;
+            selectAll.indeterminate = checkedCount > 0 && checkedCount < visible.length;
+            rows.forEach(row => {
+                const checked = selected.has(keyOf(row));
+                row.querySelector('.row-select').checked = checked;
+                row.classList.toggle('selected-row', checked);
+            });
+        }
+
+        function render() {
+            const pages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+            page = Math.min(page, pages);
+            const first = filteredRows.length ? (page - 1) * pageSize : 0;
+            const last = Math.min(first + pageSize, filteredRows.length);
+            const visible = new Set(filteredRows.slice(first, last));
+            rows.forEach(row => {
+                row.hidden = !visible.has(row);
+                if (visible.has(row)) body.appendChild(row);
+            });
+            document.getElementById('empty-state').classList.toggle('d-none', filteredRows.length !== 0);
+            document.getElementById('page-info').textContent = filteredRows.length
+                ? `Showing ${first + 1}–${last} of ${filteredRows.length.toLocaleString()} records`
+                : 'Showing 0 records';
+            pagination.replaceChildren();
+            if (pages > 1) {
+                addPageLink('Previous', Math.max(1, page - 1), page === 1, false);
+                const start = Math.max(1, Math.min(page - 2, pages - 4));
+                const end = Math.min(pages, start + 4);
+                for (let number = start; number <= end; number++) addPageLink(String(number), number, false, number === page);
+                addPageLink('Next', Math.min(pages, page + 1), page === pages, false);
+            }
+            updateSelection();
+        }
+
+        function addPageLink(label, targetPage, disabled, active) {
+            const item = document.createElement('li');
+            item.className = `page-item${disabled ? ' disabled' : ''}${active ? ' active' : ''}`;
+            const link = document.createElement('button');
+            link.type = 'button';
+            link.className = 'page-link';
+            link.textContent = label;
+            link.disabled = disabled;
+            if (active) link.setAttribute('aria-current', 'page');
+            link.addEventListener('click', () => { page = targetPage; render(); });
+            item.appendChild(link);
+            pagination.appendChild(item);
+        }
+
+        function filterAndRender() {
+            const query = search.value.trim().toLocaleLowerCase();
+            filteredRows = rows.filter(row => !query || Object.values(fieldAttributes)
+                .some(attribute => (row.dataset[attribute] || '').toLocaleLowerCase().includes(query)));
+            if (sortField) sortRows();
+            page = 1;
+            render();
+        }
+
+        function sortRows() {
+            const attribute = fieldAttributes[sortField];
+            filteredRows.sort((first, second) => {
+                const a = first.dataset[attribute] || '';
+                const b = second.dataset[attribute] || '';
+                const comparison = a !== '' && b !== '' && Number.isFinite(Number(a)) && Number.isFinite(Number(b))
+                    ? Number(a) - Number(b)
+                    : a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'});
+                return comparison * sortDirection;
+            });
+        }
+
+        rows.forEach(row => row.querySelector('.row-select').addEventListener('change', event => {
+            if (event.target.checked) selected.add(keyOf(row));
+            else selected.delete(keyOf(row));
+            updateSelection();
+        }));
+
+        search.addEventListener('input', filterAndRender);
+        pageSizeSelect.addEventListener('change', () => {
+            pageSize = Number(pageSizeSelect.value);
+            page = 1;
+            render();
+        });
+        selectAll.addEventListener('change', () => {
+            const visible = filteredRows.slice((page - 1) * pageSize, page * pageSize);
+            visible.forEach(row => {
+                if (selectAll.checked) selected.add(keyOf(row));
+                else selected.delete(keyOf(row));
+            });
+            updateSelection();
+        });
+        document.querySelectorAll('.sort-button').forEach(button => button.addEventListener('click', () => {
+            const nextField = button.dataset.sort;
+            sortDirection = sortField === nextField ? -sortDirection : 1;
+            sortField = nextField;
+            document.querySelectorAll('.sort-button i').forEach(icon => icon.className = 'fa-solid fa-sort');
+            button.querySelector('i').className = `fa-solid ${sortDirection === 1 ? 'fa-sort-up' : 'fa-sort-down'}`;
+            sortRows();
+            page = 1;
+            render();
+        }));
+        addButton.addEventListener('click', () => {
+            const count = selected.size;
+            document.getElementById('toast-message').textContent =
+                `${count.toLocaleString()} inventory ${count === 1 ? 'item has' : 'items have'} been added to your selection.`;
+            $('#selection-toast').toast('show');
+        });
+
+        const uniqueStyles = new Set(rows.map(row => row.dataset.style));
+        document.getElementById('style-count').textContent = uniqueStyles.size.toLocaleString();
+        filterAndRender();
+    })();
+</script>
+</th:block>
+</html>
